@@ -15,4 +15,4 @@ go install ./... > /dev/null 2>&1 && echo "done." || {
 }
 
 echo "Running app..."
-$GOPATH/bin/meetgrinder
+$GOPATH/bin/meetgrinder-api
