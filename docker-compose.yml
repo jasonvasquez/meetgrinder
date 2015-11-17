@@ -1,0 +1,10 @@
+api:
+  build: .
+  container_name: meetgrinder-api
+  ports:
+   - "8081:8081"
+  links:
+   - mongo
+mongo:
+  image: mongo
+  container_name: meetgrinder-db
