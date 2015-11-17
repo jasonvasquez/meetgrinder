@@ -9,7 +9,7 @@ import (
 
 	"github.com/gorilla/mux"
 
-	"github.com/jasonvasquez/meetgrinder-api/types"
+	"github.com/jasonvasquez/meetgrinder-api/model"
 )
 
 func Index(w http.ResponseWriter, r *http.Request) {
@@ -18,9 +18,9 @@ func Index(w http.ResponseWriter, r *http.Request) {
 
 func EventIndex(w http.ResponseWriter, r *http.Request) {
 
-	events := []types.Event{
-		types.Event{Id: "1", Name: "Warren ES #1"},
-		types.Event{Id: "2", Name: "Warren ES #2"},
+	events := []model.Event{
+		model.Event{Id: "1", Name: "Warren ES #1"},
+		model.Event{Id: "2", Name: "Warren ES #2"},
 	}
 
 	w.Header().Set("Content-Type", "application/json; charset=UTF-8")
@@ -34,7 +34,7 @@ func EventShow(w http.ResponseWriter, r *http.Request) {
 	vars := mux.Vars(r)
 	eventId := vars["eventId"]
 
-	event := types.Event{Id: eventId, Name: "Warren ES #523"}
+	event := model.Event{Id: eventId, Name: "Warren ES #523"}
 
 	if err := json.NewEncoder(w).Encode(event); err != nil {
 		panic(err)
@@ -43,7 +43,7 @@ func EventShow(w http.ResponseWriter, r *http.Request) {
 }
 
 func EventCreate(w http.ResponseWriter, r *http.Request) {
-	var event types.Event
+	var event model.Event
 	body, err := ioutil.ReadAll(io.LimitReader(r.Body, 1048576))
 	if err != nil {
 		panic(err)

@@ -1,7 +1,7 @@
 #!/bin/bash
 
 readonly SRC_DIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )"
-readonly PACKAGES=". ./types"
+readonly PACKAGES=". ./model"
 
 echo "Building packages: $PACKAGES"
 
