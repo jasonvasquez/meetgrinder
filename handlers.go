@@ -8,6 +8,8 @@ import (
 	"net/http"
 
 	"github.com/gorilla/mux"
+
+	"github.com/jasonvasquez/meetgrinder-api/types"
 )
 
 func Index(w http.ResponseWriter, r *http.Request) {
@@ -16,9 +18,9 @@ func Index(w http.ResponseWriter, r *http.Request) {
 
 func EventIndex(w http.ResponseWriter, r *http.Request) {
 
-	events := Events{
-		Event{Id: "1", Name: "Warren ES #1"},
-		Event{Id: "2", Name: "Warren ES #2"},
+	events := []types.Event{
+		types.Event{Id: "1", Name: "Warren ES #1"},
+		types.Event{Id: "2", Name: "Warren ES #2"},
 	}
 
 	w.Header().Set("Content-Type", "application/json; charset=UTF-8")
@@ -32,7 +34,7 @@ func EventShow(w http.ResponseWriter, r *http.Request) {
 	vars := mux.Vars(r)
 	eventId := vars["eventId"]
 
-	event := Event{Id: eventId, Name: "Warren ES #523"}
+	event := types.Event{Id: eventId, Name: "Warren ES #523"}
 
 	if err := json.NewEncoder(w).Encode(event); err != nil {
 		panic(err)
@@ -41,7 +43,7 @@ func EventShow(w http.ResponseWriter, r *http.Request) {
 }
 
 func EventCreate(w http.ResponseWriter, r *http.Request) {
-	var event Event
+	var event types.Event
 	body, err := ioutil.ReadAll(io.LimitReader(r.Body, 1048576))
 	if err != nil {
 		panic(err)

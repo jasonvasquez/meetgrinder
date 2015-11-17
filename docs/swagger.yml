@@ -1,0 +1,229 @@
+swagger: '2.0'
+info:
+  version: 1.0.0
+  title: MeetGrinder API
+  description: >
+    #### Tournament schedule manager for teams
+schemes:
+  - http
+  - https
+  - ws
+  - wss
+host: meetgrinder.herokuapp.com
+basePath: /api/v1
+consumes:
+  - application/json
+produces:
+  - application/json
+paths:
+  /events:
+    get:
+      description: Returns a list of events, in date-ascending order
+      parameters:
+        - name: from
+          in: query
+          description: show events on or after the given date
+            (e.g,. `2015-10-01`)
+          required: false
+          type: string
+          default: "2015-01-01"
+        - name: to
+          in: query
+          description: show events before the given date
+            (e.g,. `2015-12-01`)
+          required: false
+          type: string
+          default: "2015-12-31"
+        - name: limit
+          in: query
+          description: limit number of results
+          required: false
+          type: integer
+          default: 30
+        - name: offset
+          in: query
+          description: the first result returned will be offset into the total
+            result set by this count
+          required: false
+          type: integer
+          default: 0
+      responses:
+        '200':
+          description: events response
+          schema:
+            $ref: '#/definitions/paginated_events'
+        default:
+          description: unexpected error
+          schema:
+            $ref: '#/definitions/errorModel'
+
+    post:
+      description: Creates a new event
+      parameters:
+        - name: event
+          in: body
+          description: new event
+          schema:
+            $ref: '#/definitions/event'
+          required: true
+
+      responses:
+        '200':
+          description: New Event
+
+  '/events/{id}':
+    parameters:
+      - name: id
+        in: path
+        description: Event ID
+        type: string
+        required: true
+    get:
+      responses:
+        '200':
+          description: The requested event
+          schema:
+            $ref: '#/definitions/event'
+    put:
+      parameters:
+        - name: event
+          in: body
+          description: The updated event
+          required: true
+          schema:
+            $ref: '#/definitions/event'
+      responses:
+        '200':
+          description: The requested event
+          schema:
+            $ref: '#/definitions/event'
+    delete:
+      responses:
+        '200':
+          description: Event deleted
+
+
+
+definitions:
+  generic_paginated_response:
+    type: object
+    required:
+      - href
+      - limit
+      - offset
+      - first
+      - last
+      - prev
+      - next
+    properties:
+      href:
+        type: string
+      limit:
+        type: integer
+        format: int64
+      offset:
+        type: integer
+        format: int64
+      first:
+        type: string
+      last:
+        type: string
+      prev:
+        type: string
+      next:
+        type: string
+
+  generic_object:
+    type: object
+    properties:
+      id:
+        type: integer
+        format: int64
+        readOnly: true
+      href:
+        type: string
+      created_at:
+        type: string
+        format: date-time
+        readOnly: true
+      updated_at:
+        type: string
+        format: date-time
+        readOnly: true
+
+
+  paginated_events:
+    allOf:
+      - $ref: '#/definitions/generic_paginated_response'
+      - type: object
+        required:
+          - items
+        properties:
+          items:
+            type: array
+            items:
+              $ref: '#/definitions/event'
+
+  heat:
+    allOf:
+      - $ref: '#/definitions/generic_object'
+      - type: object
+        required:
+          - number
+        properties:
+          number:
+            type: integer
+            format: int32
+
+  event:
+    allOf:
+      - $ref: '#/definitions/generic_object'
+      - type: object
+        required:
+          - name
+          - date
+        properties:
+          name:
+            type: string
+          date:
+            type: string
+            format: date
+          heats:
+            type: array
+            items:
+              $ref: '#/definitions/heat'
+          participants:
+            type: array
+            items:
+              $ref: '#/definitions/person'
+
+
+  person:
+    allOf:
+      - $ref: '#/definitions/generic_object'
+      - type: object
+        required:
+          - name
+        properties:
+          id:
+            type: integer
+            format: int64
+            readOnly: true
+          name:
+            type: string
+          email:
+            type: string
+            format: email
+
+
+  errorModel:
+    type: object
+    required:
+      - code
+      - message
+    properties:
+      code:
+        type: integer
+        format: int32
+      message:
+        type: string
