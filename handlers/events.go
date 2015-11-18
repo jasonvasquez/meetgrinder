@@ -1,8 +1,7 @@
-package main
+package handlers
 
 import (
 	"encoding/json"
-	"fmt"
 	"io"
 	"io/ioutil"
 	"net/http"
@@ -11,10 +10,6 @@ import (
 
 	"github.com/jasonvasquez/meetgrinder-api/model"
 )
-
-func Index(w http.ResponseWriter, r *http.Request) {
-	fmt.Fprintf(w, "Welcome")
-}
 
 func EventIndex(w http.ResponseWriter, r *http.Request) {
 
@@ -34,9 +29,16 @@ func EventShow(w http.ResponseWriter, r *http.Request) {
 	vars := mux.Vars(r)
 	eventId := vars["eventId"]
 
-	event := model.Event{Id: eventId, Name: "Warren ES #523"}
+	w.Header().Set("Content-Type", "application/json; charset=UTF-8")
 
-	if err := json.NewEncoder(w).Encode(event); err != nil {
+	var response = model.FindById(model.Event{}, eventId)
+
+	if response == nil {
+		w.WriteHeader(http.StatusNotFound)
+		response = model.Error{http.StatusNotFound, "No Event found with that Id"}
+	}
+
+	if err := json.NewEncoder(w).Encode(response); err != nil {
 		panic(err)
 	}
 

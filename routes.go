@@ -2,6 +2,8 @@ package main
 
 import (
 	"net/http"
+
+	"github.com/jasonvasquez/meetgrinder-api/handlers"
 )
 
 type Route struct {
@@ -18,24 +20,24 @@ var routes = Routes{
 		"Index",
 		"GET",
 		"/",
-		Index,
+		handlers.Index,
 	},
 	Route{
 		"EventIndex",
 		"GET",
 		"/events",
-		EventIndex,
+		handlers.EventIndex,
 	},
 	Route{
 		"EventShow",
 		"GET",
 		"/events/{eventId}",
-		EventShow,
+		handlers.EventShow,
 	},
 	Route{
 		"EventCreate",
 		"POST",
 		"/events",
-		EventCreate,
+		handlers.EventCreate,
 	},
 }
