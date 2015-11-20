@@ -142,6 +142,7 @@ definitions:
         readOnly: true
       href:
         type: string
+        readOnly: true
       created_at:
         type: string
         format: date-time
