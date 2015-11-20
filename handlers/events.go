@@ -13,10 +13,7 @@ import (
 
 func EventIndex(w http.ResponseWriter, r *http.Request) {
 
-	events := []model.Event{
-		model.Event{Id: "1", Name: "Warren ES #1"},
-		model.Event{Id: "2", Name: "Warren ES #2"},
-	}
+	events := model.FindAllEvents()
 
 	w.Header().Set("Content-Type", "application/json; charset=UTF-8")
 	w.WriteHeader(http.StatusOK)
@@ -29,10 +26,9 @@ func EventShow(w http.ResponseWriter, r *http.Request) {
 	vars := mux.Vars(r)
 	eventId := vars["eventId"]
 
+	var response = model.FindEventById(eventId)
+
 	w.Header().Set("Content-Type", "application/json; charset=UTF-8")
-
-	var response = model.FindById(model.Event{}, eventId)
-
 	if response == nil {
 		w.WriteHeader(http.StatusNotFound)
 		response = model.Error{http.StatusNotFound, "No Event found with that Id"}

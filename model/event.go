@@ -11,15 +11,35 @@ import (
 
 const eventCollectionName = "events"
 
-type dbOperation func(*mgo.Collection)
-
 type Event struct {
 	GenericObject
-	Id           bson.ObjectId `json:"id" bson:"_id,omitempty"`
-	Name         string        `json:"name"`
-	Date         types.MGDate  `json:"date"`
-	Heats        []Heat        `json:"heats"`
-	Participants []Person      `json:"participants"`
+	Id           string       `json:"id" bson:"_id,omitempty"`
+	Name         string       `json:"name" bson:"name"`
+	Date         types.MGDate `json:"date" bson:"date"`
+	Heats        []Heat       `json:"heats" bson:"heats"`
+	Participants []Person     `json:"participants" bson:"participants"`
+}
+
+func FindAllEvents() []Event {
+
+	var events []Event
+	dbPerform(eventCollectionName, func(c *mgo.Collection) {
+		c.Find(nil).Sort("date", "name").All(&events)
+	})
+
+	return events
+}
+
+func FindEventById(id string) interface{} {
+
+	event := Event{}
+	dbPerform(eventCollectionName, func(c *mgo.Collection) {
+		log.Printf("Searching by id: %v", id)
+		c.FindId(id).One(&event)
+		log.Printf("Result: %v", event)
+	})
+
+	return event
 }
 
 func (evt *Event) Create() Event {
@@ -27,14 +47,11 @@ func (evt *Event) Create() Event {
 	now := bson.Now()
 	evt.CreatedAt = now
 	evt.UpdatedAt = now
-	evt.Id = bson.NewObjectId()
+	evt.Id = bson.NewObjectId().Hex()
 
-	var newEvent Event
-	dbPerform(func(c *mgo.Collection) {
+	dbPerform(eventCollectionName, func(c *mgo.Collection) {
 		c.Insert(evt)
-		log.Printf("New event: %v", evt)
-		newEvent = *evt
 	})
 
-	return newEvent
+	return *evt
 }

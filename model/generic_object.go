@@ -16,15 +16,7 @@ type GenericObject struct {
 	UpdatedAt time.Time `json:"updated_at"`
 }
 
-func FindById(i interface{}, id string) interface{} {
-
-	// event := Event{Id: id, Name: "Event from finder"}
-	// event := nil
-
-	return nil
-}
-
-func dbPerform(op func(*mgo.Collection)) {
+func dbPerform(collectionName string, op func(*mgo.Collection)) {
 	// sess := mongoSession.Copy()
 	// defer sess.Close()
 
@@ -50,6 +42,6 @@ func dbPerform(op func(*mgo.Collection)) {
 	// Optional. Switch the session to a monotonic behavior.
 	sess.SetMode(mgo.Monotonic, true)
 
-	collection := sess.DB(dbName).C(eventCollectionName)
+	collection := sess.DB(dbName).C(collectionName)
 	op(collection)
 }

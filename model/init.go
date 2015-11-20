@@ -23,7 +23,7 @@ func (l logger) Output(calldepth int, s string) error {
 func init() {
 	log.Println("Initializing Model Layer")
 
-	// mgo.SetDebug(true)
+	mgo.SetDebug(true)
 	mgo.SetLogger(logger{})
 
 	// var mongoURL string
