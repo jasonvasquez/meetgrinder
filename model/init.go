@@ -3,49 +3,62 @@ package model
 import (
 	"fmt"
 	"gopkg.in/mgo.v2"
-	"gopkg.in/mgo.v2/bson"
+	// "gopkg.in/mgo.v2/bson"
 	"log"
-	"os"
-	"strings"
+	// "os"
+	// "strings"
 )
 
+const dbName = "meetgrinder"
+
+var mongoSession mgo.Session
+
+type logger struct{}
+
+func (l logger) Output(calldepth int, s string) error {
+	fmt.Printf("\t[%d]: %s\n", calldepth, s)
+	return nil
+}
+
 func init() {
-
 	log.Println("Initializing Model Layer")
-	var mongoURL string
 
-	// Use a docker-style environment variable to locate the mongo instance
-	// otherwise, fall back and assume localhost
-	tcpURL := os.Getenv("DB_PORT")
-	if tcpURL == "" {
-		mongoURL = "mongodb://localhost"
-	} else {
-		mongoURL = strings.Replace(tcpURL, "tcp://", "mongodb://", -1)
-	}
+	// mgo.SetDebug(true)
+	mgo.SetLogger(logger{})
 
-	log.Println("Connecting to mongo at", mongoURL)
+	// var mongoURL string
 
-	session, err := mgo.Dial(mongoURL)
-	if err != nil {
-		panic(err)
-	}
-	defer session.Close()
+	// // Use a docker-style environment variable to locate the mongo instance
+	// // otherwise, fall back and assume localhost
+	// tcpURL := os.Getenv("DB_PORT")
+	// if tcpURL == "" {
+	// 	mongoURL = "mongodb://localhost"
+	// } else {
+	// 	mongoURL = strings.Replace(tcpURL, "tcp://", "mongodb://", -1)
+	// }
 
-	// Optional. Switch the session to a monotonic behavior.
-	session.SetMode(mgo.Monotonic, true)
+	// log.Println("Connecting to mongo at", mongoURL)
 
-	c := session.DB("test").C("people")
-	err = c.Insert(&Person{Name: "Ale"},
-		&Person{Name: "Cla"})
-	if err != nil {
-		log.Fatal(err)
-	}
+	// mongoSession, err := mgo.Dial(mongoURL)
+	// if err != nil {
+	// 	panic(err)
+	// }
 
-	result := Person{}
-	err = c.Find(bson.M{"name": "Ale"}).One(&result)
-	if err != nil {
-		log.Fatal(err)
-	}
+	// // Optional. Switch the session to a monotonic behavior.
+	// mongoSession.SetMode(mgo.Monotonic, true)
 
-	fmt.Println("Name:", result.Name)
+	// c := session.DB("test").C("people")
+	// err = c.Insert(&Person{Name: "Ale"},
+	// 	&Person{Name: "Cla"})
+	// if err != nil {
+	// 	log.Fatal(err)
+	// }
+
+	// result := Person{}
+	// err = c.Find(bson.M{"name": "Ale"}).One(&result)
+	// if err != nil {
+	// 	log.Fatal(err)
+	// }
+
+	// fmt.Println("Name:", result.Name)
 }

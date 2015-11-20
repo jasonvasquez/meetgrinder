@@ -1,6 +1,11 @@
 package model
 
 import (
+	"gopkg.in/mgo.v2"
+
+	"log"
+	"os"
+	"strings"
 	"time"
 )
 
@@ -17,4 +22,34 @@ func FindById(i interface{}, id string) interface{} {
 	// event := nil
 
 	return nil
+}
+
+func dbPerform(op func(*mgo.Collection)) {
+	// sess := mongoSession.Copy()
+	// defer sess.Close()
+
+	var mongoURL string
+
+	// Use a docker-style environment variable to locate the mongo instance
+	// otherwise, fall back and assume localhost
+	tcpURL := os.Getenv("DB_PORT")
+	if tcpURL == "" {
+		mongoURL = "mongodb://localhost"
+	} else {
+		mongoURL = strings.Replace(tcpURL, "tcp://", "mongodb://", -1)
+	}
+
+	log.Println("Connecting to mongo at", mongoURL)
+
+	sess, err := mgo.Dial(mongoURL)
+	if err != nil {
+		panic(err)
+	}
+	defer sess.Close()
+
+	// Optional. Switch the session to a monotonic behavior.
+	sess.SetMode(mgo.Monotonic, true)
+
+	collection := sess.DB(dbName).C(eventCollectionName)
+	op(collection)
 }

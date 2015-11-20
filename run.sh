@@ -1,12 +1,19 @@
 #!/bin/bash
 
 readonly SRC_DIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )"
-readonly PACKAGES=". ./model"
+readonly PACKAGES=". ./handlers ./model ./types"
 
 echo "Building packages: $PACKAGES"
 
 echo -n "go get......."
 output=$(go get $PACKAGES 2>&1) && echo "done." || {
+  echo "error."
+  echo "$output"
+  exit 1
+}
+
+echo -n "go test..."
+output=$(go test $PACKAGES 2>&1) && echo "done." || {
   echo "error."
   echo "$output"
   exit 1
