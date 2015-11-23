@@ -1,15 +1,24 @@
 package main
 
 import (
-	"fmt"
-	"log"
-	"net/http"
+	"github.com/jasonvasquez/meetgrinder-api/Godeps/_workspace/src/github.com/gin-gonic/gin"
+
+	"github.com/jasonvasquez/meetgrinder-api/handlers"
 )
 
-func main() {
-	router := NewRouter()
+const listenPort = 8081
 
-	fmt.Println("About to Listen")
-	log.Fatal(http.ListenAndServe(":8081", router))
-	fmt.Println("Listening!")
+func main() {
+	gin.SetMode(gin.DebugMode)
+
+	r := gin.Default()
+	r.RedirectFixedPath = true
+
+	v1 := r.Group("/api/v1")
+	{
+		handlers.Register(v1)
+	}
+
+	r.Run(":8081")
+
 }
