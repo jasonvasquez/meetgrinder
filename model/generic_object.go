@@ -1,7 +1,7 @@
 package model
 
 import (
-	"gopkg.in/mgo.v2"
+	"github.com/jasonvasquez/meetgrinder-api/Godeps/_workspace/src/gopkg.in/mgo.v2"
 
 	"log"
 	"os"

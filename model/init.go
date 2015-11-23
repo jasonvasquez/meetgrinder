@@ -2,7 +2,7 @@ package model
 
 import (
 	"fmt"
-	"gopkg.in/mgo.v2"
+	"github.com/jasonvasquez/meetgrinder-api/Godeps/_workspace/src/gopkg.in/mgo.v2"
 	// "gopkg.in/mgo.v2/bson"
 	"log"
 	// "os"
@@ -23,7 +23,7 @@ func (l logger) Output(calldepth int, s string) error {
 func init() {
 	log.Println("Initializing Model Layer")
 
-	mgo.SetDebug(true)
+	// mgo.SetDebug(true)
 	mgo.SetLogger(logger{})
 
 	// var mongoURL string
